@@ -128,3 +128,36 @@ export const sortProduct = async (req, res) => {
       .json({ success: false, message: error.message || "Server error" });
   }
 };
+
+export const testingOperators = async(req,res)=>{
+try{
+  //comparison query operators
+// const products = await Product.find({price : {$eq :450}})
+// const products = await Product.find({price : {$ne :450}})
+// const products = await Product.find({price : {$gt :450}})
+// const products = await Product.find({price : {$gte :450}})
+// const products = await Product.find({price : {$lt :450}})
+// const products = await Product.find({price : {$lte :450}})
+// const products = await Product.find({price : {$in :[1200,40,300]}})
+// const products = await Product.find({price : {$nin :[1200,40,300]}})
+// const products = await Product.find({price : {$exists :true}})
+
+//logical query operators
+const {minLimit,maxLimit}=req.body
+// const products = await Product.find({$and: [{price:{$gt: 400}},{price:{$lt:2000}}]})
+// const products = await Product.find({$and: [{price:{$gt: minLimit}},{price:{$lt:maxLimit}}]})
+// const products = await Product.find({$or: [{price:{$gt: minLimit}},{price:{$lt:maxLimit}}]})
+// const products = await Product.find({price : {$not:{$gt:350}}})
+// const products = await Product.find({$nor: [{price:{$gt:350}},{price:{$gte:350}}]})
+const products = await Product.find({price:{$type:"string"}}) //will give empty array because all the price values are of type number
+
+
+
+
+return res.status(200).json({success : true, products})
+}catch(error){
+  return res
+  .status(500)
+  .json({ success: false, message: error.message || "Server error" });
+}
+}
