@@ -129,35 +129,75 @@ export const sortProduct = async (req, res) => {
   }
 };
 
-export const testingOperators = async(req,res)=>{
-try{
-  //comparison query operators
-// const products = await Product.find({price : {$eq :450}})
-// const products = await Product.find({price : {$ne :450}})
-// const products = await Product.find({price : {$gt :450}})
-// const products = await Product.find({price : {$gte :450}})
-// const products = await Product.find({price : {$lt :450}})
-// const products = await Product.find({price : {$lte :450}})
-// const products = await Product.find({price : {$in :[1200,40,300]}})
-// const products = await Product.find({price : {$nin :[1200,40,300]}})
-// const products = await Product.find({price : {$exists :true}})
+export const testingOperators = async (req, res) => {
+  try {
+    //comparison query operators
+    // const products = await Product.find({price : {$eq :450}})
+    // const products = await Product.find({price : {$ne :450}})
+    // const products = await Product.find({price : {$gt :450}})
+    // const products = await Product.find({price : {$gte :450}})
+    // const products = await Product.find({price : {$lt :450}})
+    // const products = await Product.find({price : {$lte :450}})
+    // const products = await Product.find({price : {$in :[1200,40,300]}})
+    // const products = await Product.find({price : {$nin :[1200,40,300]}})
+    // const products = await Product.find({price : {$exists :true}})
 
-//logical query operators
-const {minLimit,maxLimit}=req.body
-// const products = await Product.find({$and: [{price:{$gt: 400}},{price:{$lt:2000}}]})
-// const products = await Product.find({$and: [{price:{$gt: minLimit}},{price:{$lt:maxLimit}}]})
-// const products = await Product.find({$or: [{price:{$gt: minLimit}},{price:{$lt:maxLimit}}]})
-// const products = await Product.find({price : {$not:{$gt:350}}})
-// const products = await Product.find({$nor: [{price:{$gt:350}},{price:{$gte:350}}]})
-const products = await Product.find({price:{$type:"string"}}) //will give empty array because all the price values are of type number
+    //logical query operators
+    const { minLimit, maxLimit } = req.body;
+    // const products = await Product.find({$and: [{price:{$gt: 400}},{price:{$lt:2000}}]})
+    // const products = await Product.find({$and: [{price:{$gt: minLimit}},{price:{$lt:maxLimit}}]})
+    // const products = await Product.find({$or: [{price:{$gt: minLimit}},{price:{$lt:maxLimit}}]})
+    // const products = await Product.find({price : {$not:{$gt:350}}})
+    // const products = await Product.find({$nor: [{price:{$gt:350}},{price:{$gte:350}}]})
+    const products = await Product.find({ price: { $type: "string" } }); //will give empty array because all the price values are of type number
+    return res.status(200).json({ success: true, products });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: error.message || "Server error" });
+  }
+};
 
-
-
-
-return res.status(200).json({success : true, products})
-}catch(error){
-  return res
-  .status(500)
-  .json({ success: false, message: error.message || "Server error" });
-}
-}
+export const aggregationPipeline = async (req, res) => {
+  try {
+    const Products = await Product.aggregate([
+      {
+        $match: {
+          category: { $in: ["Clothing", "Electronics", "Accessory"] },
+          price: { $gte: 2000 },
+          quantity: { $gte: 30 },
+          // tags : {$exists : true}
+        }, //here 3 conditions have been applied for matching
+      },
+      // {
+      //   $group : {
+      //     _id : "$category", //_id : "product"
+      //     totalOfQuantity : {$sum : "$quantity"},
+      //     totalOfPrice : {$sum : {$multiply : ["$quantity", "$price"]}}
+      //   }
+      // }
+      // {
+      //   $unwind: "$tags",
+      // },
+      // {
+      //   $project : {
+      //     name : 1,
+      //     price : 1,
+      //     image : 1
+      //   }
+      // }
+      {
+        $project : {
+          category : 0,
+          __v : 0,
+          updatedAt : 0,
+          image : 0,
+          createdBy : 0
+        }
+      }
+    ]);
+    return res.send(Products);
+  } catch (error) {
+    return res.json({ success: false, message: error });
+  }
+};
