@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 const app=express();
 app.use(cookieParser())
 app.use(express.json());
-app.use(cors({origin:"https://products-qsfa.onrender.com",credentials:true}));
+app.use(cors({origin:["https://products-qsfa.onrender.com", "http://localhost:3000"],credentials:true}));
 dotenv.config();
 
 app.get("/",(req,res)=>{
@@ -17,7 +17,7 @@ app.get("/",(req,res)=>{
 
 app.use("/api/v1/", allRoutes)
 
-mongoose.connect(process.env.MONGODBURL).then(()=>{
+mongoose.connect(process.env.MONGODBURL).then(()=>{ 
     console.log("mongoDb is connected")
 })
 
