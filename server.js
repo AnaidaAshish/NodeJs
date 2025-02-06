@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 const app=express();
 app.use(cookieParser())
 app.use(express.json());
-app.use(cors({origin:"https://products-dtww.onrender.com",credentials:true}));
+app.use(cors({origin:["https://react-7r85.onrender.com","http://localhost:3000"],credentials:true}));
 dotenv.config();
 
 app.get("/",(req,res)=>{
